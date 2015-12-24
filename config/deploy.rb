@@ -44,14 +44,14 @@ set :rbenv_roles, :all # default value
 namespace :deploy do
 
   desc 'Restart appication'
-=begin
+
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
       execute :touch, "#{fetch :deploy_to}/current/tmp/restart.txt"
     end
   end
   after :publishing, :restart
-=end
+
   #after :restart, :clear_cache do
   #  on roles(:web), in: :groups, limit: 3, wait: 10 do
       # Here we can do anything such as:
