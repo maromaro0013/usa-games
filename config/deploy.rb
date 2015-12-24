@@ -2,13 +2,13 @@
 lock '3.4.0'
 
 set :application, 'usa-games'
-set :repo_url, 'https://github.com/maromaro0013/funa-games.git'
+set :repo_url, 'https://github.com/maromaro0013/usa-games.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, '/home/usa-games/#{fetch(:application)}'
+set :deploy_to, "/home/usa-games/#{fetch(:application)}"
 
 # Default value for :scm is :git
 # set :scm, :git
