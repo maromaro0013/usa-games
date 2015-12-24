@@ -1,0 +1,54 @@
+# Place all the behaviors and hooks related to the matching controller here.
+# All this logic will automatically be available in application.js.
+# You can use CoffeeScript in this file: http://coffeescript.org/
+
+GameMain = ->
+  m_game_scale = 1.0
+
+  FixViewPort = ->
+    m_game_scale = window.innerHeight / CANVAS_HEIGHT
+    if (window.innerWidth / CANVAS_WIDTH) < (window.innerHeight / CANVAS_HEIGHT) 
+      m_game_scale = window.innerWidth / CANVAS_WIDTH
+
+  preload = ->
+    game.time.advancedTiming = true
+    
+    game.load.image('title_bg', '<%= image_path("games/watch/title_background.png") %>')
+    game.load.image('usa', '<%= image_path("games/watch/usa.png") %>')
+    game.load.image('time_bg', '<%= image_path("games/watch/time_bg.png") %>')
+
+    game.load.atlas('time_num', '<%= image_path("games/watch/time_num.png") %>', '<%= asset_path("jsons/games/watch/time_num.json") %>')
+
+  create = ->
+    game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE
+    FixViewPort()
+    game.scale.setUserScale(m_game_scale, m_game_scale, 0, 0)
+    game.scale.updateLayout()
+
+    game.stage.backgroundColor = BG_COLOR
+    
+    game.add.image(TITLE_BG_X, TITLE_BG_Y, 'title_bg')
+    game.add.image(USA_X, USA_Y, 'usa')
+    game.add.image(TIME_BG_X, TIME_BG_Y, 'time_bg')
+    
+    game.add.sprite(TIME_ONE_X, TIME_ONE_Y, 'time_num', '0')
+    game.add.sprite(TIME_TWO_X, TIME_TWO_Y, 'time_num', '1')
+    game.add.sprite(TIME_THREE_X, TIME_THREE_Y, 'time_num', '2')
+
+  render = ->
+    yi = 32
+    y = 0
+    game.debug.text('fps : ' + game.time.fps, 0, y += yi)
+    game.debug.text('scale : ' + m_game_scale, 0, y += yi)
+
+  update = ->
+    
+
+  window['PhaserGlobal'] = []
+  window['PhaserGlobal'].disableAudio = true
+
+  game = new Phaser.Game(CANVAS_WIDTH, CANVAS_HEIGHT, Phaser.CANVAS, 'phaser-watch', { preload, create, update, render }, false, false, null)
+
+$(document).on('ready page:load', ->
+  GameMain()
+)

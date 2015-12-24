@@ -1,0 +1,9 @@
+<% content_for :add_css_include do %>
+	<%= stylesheet_link_tag 'games/watch-app', media: 'all', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :add_js_include do %>
+	<%= javascript_include_tag 'games/watch-app', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div id="phaser-watch"></div>

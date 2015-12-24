@@ -1,0 +1,15 @@
+<% content_for :add_css_include do %>
+  <%= stylesheet_link_tag 'webpages/toppage-app', media: 'all', 'data-turbolinks-track' => true %>
+<% end %>
+<% content_for :add_js_include do %>
+  <%= javascript_include_tag 'webpages/toppage-app', 'data-turbolinks-track' => true %>
+<% end %>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+
+<ul class="game_links">
+  <li><%= link_to("うさっしー", "/games/watch") %></li>
+  <li><%= link_to("うさうさ", "/games/usausa") %></li>
+  <li><%= link_to("うさ救出", "/games/rescue") %></li>
+</ul>

@@ -1,0 +1,44 @@
+# Place all the behaviors and hooks related to the matching controller here.
+# All this logic will automatically be available in application.js.
+# You can use CoffeeScript in this file: http://coffeescript.org/
+
+GameMain = ->
+  m_game_scale = 1.0
+
+  FixViewPort = ->
+    m_game_scale = window.innerHeight / CANVAS_HEIGHT
+    if (window.innerWidth / CANVAS_WIDTH) < (window.innerHeight / CANVAS_HEIGHT)
+      m_game_scale = window.innerWidth / CANVAS_WIDTH
+
+  preload = ->
+    game.time.advancedTiming = true
+
+    game.load.image('bg', '<%= image_path("games/rescue/bg.png") %>')
+
+  create = ->
+    game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE
+    FixViewPort()
+    game.scale.setUserScale(m_game_scale, m_game_scale, 0, 0)
+    game.scale.updateLayout()
+
+    game.stage.backgroundColor = BG_COLOR
+
+    game.add.image(BG_X, BG_Y, 'bg')
+
+  render = ->
+    yi = 32
+    y = 0
+    game.debug.text('fps : ' + game.time.fps, 0, y += yi)
+    game.debug.text('scale : ' + m_game_scale, 0, y += yi)
+
+  update = ->
+
+
+  window['PhaserGlobal'] = []
+  window['PhaserGlobal'].disableAudio = true
+
+  game = new Phaser.Game(CANVAS_WIDTH, CANVAS_HEIGHT, Phaser.CANVAS, 'phaser-rescue', { preload, create, update, render }, false, false, null)
+
+$(document).on('ready page:load', ->
+  GameMain()
+)

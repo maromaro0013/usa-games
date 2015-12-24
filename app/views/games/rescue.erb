@@ -1,0 +1,9 @@
+<% content_for :add_css_include do %>
+	<%= stylesheet_link_tag 'games/rescue-app', media: 'all', 'data-turbolinks-track' => true %>
+<% end %>
+
+<% content_for :add_js_include do %>
+	<%= javascript_include_tag 'games/rescue-app', 'data-turbolinks-track' => true %>
+<% end %>
+
+<div id="phaser-rescue"></div>

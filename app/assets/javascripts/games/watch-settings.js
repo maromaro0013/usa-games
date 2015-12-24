@@ -1,0 +1,22 @@
+var CANVAS_WIDTH = 720;
+var CANVAS_HEIGHT = 1120;
+
+var BG_COLOR = '#703020';
+
+var TITLE_BG_X = 60;
+var TITLE_BG_Y = 40;
+
+var USA_X = 140;
+var USA_Y = 260;
+
+var TIME_BG_X = 200;
+var TIME_BG_Y = 664;
+
+var TIME_ONE_X = TIME_BG_X + 20;
+var TIME_ONE_Y = TIME_BG_Y + 6;
+
+var TIME_TWO_X = TIME_ONE_X + 100;
+var TIME_TWO_Y = TIME_ONE_Y;
+
+var TIME_THREE_X = TIME_TWO_X + 110;
+var TIME_THREE_Y = TIME_TWO_Y;

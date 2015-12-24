@@ -3,7 +3,13 @@
 <head>
   <title>UsaGames</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= yield :add_css_include %>
+
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= yield :add_js_include %>
+
+  <%= favicon_link_tag 'common/favicon.ico' %>
+
   <%= csrf_meta_tags %>
 </head>
 <body>
