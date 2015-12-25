@@ -11,8 +11,41 @@ GameMain = ->
       m_game_scale = window.innerWidth / CANVAS_WIDTH
 
   update_field_buff = (field)->
-    ""
+    field.buff = []
+    for y in [0..field.h - 1]
+      field.buff[y] = []
+      for x in [0..field.w - 1]
+        field.buff[y][x] = 0
 
+    for key,panel of field.panels
+      for y in [panel["y"]..panel["y"]+panel["h"] - 1]
+        for x in [panel["x"]..panel["x"]+panel["w"] - 1]
+          field.buff[y][x] = 1
+
+    for key,panel of field.panels
+      min_move_x = max_move_x = FIELD_OFS_X + panel.x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
+      min_move_y = max_move_y = FIELD_OFS_Y + panel.y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+      panel.image.min_move_x = min_move_x
+      panel.image.min_move_y = min_move_y
+      panel.image.max_move_x = max_move_x
+      panel.image.max_move_y = max_move_y
+      console.log panel
+    ###
+    for key,panel of field.panels
+      for target_key,target_panel of field.panels
+        if key == target_key
+          continue
+        ""
+    ###
+
+
+
+  panel_drag_update = (sprite, pointer, drag_x, drag_y, snapPoint) ->
+    sprite.y = sprite.max_move_y
+    sprite.x = sprite.max_move_x
+    #sprite.y = FIELD_OFS_Y + sprite.idx_y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+    #console.log drag_x
+    ""
 
   create_panels_from_json = (field_json)->
     field_data = new Object
@@ -37,8 +70,13 @@ GameMain = ->
       if field_data.panels[key].w == 2 && field_data.panels[key].h == 2
         field_data.panels[key].image = game.add.sprite(x, y, "22_0")
 
+      field_data.panels[key].image.idx_x = field_data.panels[key].x
+      field_data.panels[key].image.idx_y = field_data.panels[key].y
       field_data.panels[key].image.inputEnabled = true
       field_data.panels[key].image.input.enableDrag true
+      field_data.panels[key].image.events.onDragUpdate.add(panel_drag_update)
+
+    update_field_buff field_data
 
   preload = ->
     game.time.advancedTiming = true
