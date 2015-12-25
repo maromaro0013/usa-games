@@ -10,10 +10,47 @@ GameMain = ->
     if (window.innerWidth / CANVAS_WIDTH) < (window.innerHeight / CANVAS_HEIGHT)
       m_game_scale = window.innerWidth / CANVAS_WIDTH
 
+  update_field_buff = (field)->
+    ""
+
+
+  create_panels_from_json = (field_json)->
+    field_data = new Object
+    field_data.w = field_json["framesize"]["w"]
+    field_data.h = field_json["framesize"]["h"]
+    field_data.end_x = field_json["endpoint"]["x"]
+    field_data.end_y = field_json["endpoint"]["y"]
+    field_data.panels = []
+
+    for key,panel of field_json["panels"]
+      field_data.panels.push(panel)
+
+      x = FIELD_OFS_X + field_data.panels[key].x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
+      y = FIELD_OFS_Y + field_data.panels[key].y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+
+      if field_data.panels[key].w == 1 && field_data.panels[key].h == 1
+        field_data.panels[key].image = game.add.sprite(x, y, "11_0")
+      if field_data.panels[key].w == 2 && field_data.panels[key].h == 1
+        field_data.panels[key].image = game.add.sprite(x, y, "21_0")
+      if field_data.panels[key].w == 1 && field_data.panels[key].h == 2
+        field_data.panels[key].image = game.add.sprite(x, y, "12_0")
+      if field_data.panels[key].w == 2 && field_data.panels[key].h == 2
+        field_data.panels[key].image = game.add.sprite(x, y, "22_0")
+
+      field_data.panels[key].image.inputEnabled = true
+      field_data.panels[key].image.input.enableDrag true
+
   preload = ->
     game.time.advancedTiming = true
 
     game.load.image('bg', '<%= image_path("games/rescue/bg.png") %>')
+    game.load.image('11_0', '<%= image_path("games/rescue/panel_11_0.png") %>')
+    game.load.image('11_1', '<%= image_path("games/rescue/panel_11_1.png") %>')
+    game.load.image('12_0', '<%= image_path("games/rescue/panel_12_0.png") %>')
+    game.load.image('12_1', '<%= image_path("games/rescue/panel_12_1.png") %>')
+    game.load.image('21_0', '<%= image_path("games/rescue/panel_21_0.png") %>')
+    game.load.image('21_1', '<%= image_path("games/rescue/panel_21_1.png") %>')
+    game.load.image('22_0', '<%= image_path("games/rescue/panel_22_0.png") %>')
 
   create = ->
     game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE
@@ -22,8 +59,9 @@ GameMain = ->
     game.scale.updateLayout()
 
     game.stage.backgroundColor = BG_COLOR
-
     game.add.image(BG_X, BG_Y, 'bg')
+
+    create_panels_from_json JSON.parse STAGE1_DATA
 
   render = ->
     yi = 32
