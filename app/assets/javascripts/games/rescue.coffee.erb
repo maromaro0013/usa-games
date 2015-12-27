@@ -19,35 +19,49 @@ GameMain = ->
         f.buff[y][x] = 0
 
     for key,panel of f.panels
-      for y in [panel["y"]..panel["y"]+panel["h"] - 1]
-        for x in [panel["x"]..panel["x"]+panel["w"] - 1]
+      img = panel.image
+      for y in [img.idx_y..img.idx_y+panel.h - 1]
+        for x in [img.idx_x..img.idx_x+panel.w - 1]
           f.buff[y][x] = 1
-
+    ###
     for key,panel of f.panels
-      min_move_x = max_move_x = FIELD_OFS_X + panel.x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
-      min_move_y = max_move_y = FIELD_OFS_Y + panel.y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
-      for y in [panel.y+panel.h..f.h - 1]
-        ""
+      img = panel.image
+      min_move_x = max_move_x = FIELD_OFS_X + img.idx_x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
+      min_move_y = max_move_y = FIELD_OFS_Y + img.idx_y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+      if img.idx_y+panel.h < f.h
+        for y in [(img.idx_y+panel.h)..(f.h - 1)]
+          if f.buff[y][img.idx_x] == 0
+            max_move_y += (ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+          else
+            break
+      if img.idx_y > 0
+        for y in [(img.idx_y-1)..0]
+          if f.buff[y][img.idx_x] == 0
+            min_move_y -= (ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+          else
+            break
 
-      if panel.x+panel.w < f.w
-        for x in [panel.x+panel.w..f.w - 1]
-          if f.buff[panel.y][x] == 0
+      if img.idx_x+panel.w < f.w
+        for x in [(img.idx_x+panel.w)..(f.w - 1)]
+          if f.buff[img.idx_y][x] == 0
             max_move_x += (ONE_WIDTH + OFS_PANEL_TO_PANEL)
           else
             break
-      if panel.x > 0
-        for x in [panel.x-1..0]
-          if f.buff[panel.y][x] == 0
+      if img.idx_x > 0
+        for x in [(img.idx_x-1)..(0)]
+          if f.buff[img.idx_y][x] == 0
             min_move_x -= (ONE_WIDTH + OFS_PANEL_TO_PANEL)
           else
             break
 
-      panel.image.min_move_x = min_move_x
-      panel.image.min_move_y = min_move_y
-      panel.image.max_move_x = max_move_x
-      panel.image.max_move_y = max_move_y
-
+      img.min_move_x = min_move_x
+      img.min_move_y = min_move_y
+      img.max_move_x = max_move_x
+      img.max_move_y = max_move_y
+      ###
   panel_drag_update = (sprite, pointer, drag_x, drag_y, snapPoint) ->
+    ""
+    ###
     if sprite.y > sprite.max_move_y
       sprite.y = sprite.max_move_y
     if sprite.y < sprite.min_move_y
@@ -56,14 +70,28 @@ GameMain = ->
       sprite.x = sprite.max_move_x
     if sprite.x < sprite.min_move_x
       sprite.x = sprite.min_move_x
+    ###
+
+  panel_set_idx = (sprite) ->
+    min_x = 9999999
+    min_y = 9999999
+    for x in [0..m_field.w - 1]
+      tmp_x = FIELD_OFS_X + x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
+      if Math.abs(tmp_x - sprite.x) < min_x
+        min_x = Math.abs(tmp_x - sprite.x)
+        sprite.idx_x = x
+
+    for y in [0..m_field.h - 1]
+      tmp_y = FIELD_OFS_Y + y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+      if Math.abs(tmp_y - sprite.y) < min_y
+        min_y = Math.abs(tmp_y - sprite.y)
+        sprite.idx_y = y
 
   panel_drag_stop = (sprite, pointer) ->
-    min_x = 0
-    min_y = 0
-    for y in [0..m_field.h]
-      for x in [0..m_field.w]
-        tmp_x = x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
-    console.log sprite.x
+    panel_set_idx(sprite)
+    sprite.x = FIELD_OFS_X + sprite.idx_x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
+    sprite.y = FIELD_OFS_Y + sprite.idx_y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+    update_field_buff(m_field)
 
   create_panels_from_json = (field_json)->
     m_field = new Object
