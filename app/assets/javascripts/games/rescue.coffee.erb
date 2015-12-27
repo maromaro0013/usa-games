@@ -4,79 +4,98 @@
 
 GameMain = ->
   m_game_scale = 1.0
+  m_field = ""
 
   FixViewPort = ->
     m_game_scale = window.innerHeight / CANVAS_HEIGHT
     if (window.innerWidth / CANVAS_WIDTH) < (window.innerHeight / CANVAS_HEIGHT)
       m_game_scale = window.innerWidth / CANVAS_WIDTH
 
-  update_field_buff = (field)->
-    field.buff = []
-    for y in [0..field.h - 1]
-      field.buff[y] = []
-      for x in [0..field.w - 1]
-        field.buff[y][x] = 0
+  update_field_buff = (f)->
+    f.buff = []
+    for y in [0..f.h - 1]
+      f.buff[y] = []
+      for x in [0..f.w - 1]
+        f.buff[y][x] = 0
 
-    for key,panel of field.panels
+    for key,panel of f.panels
       for y in [panel["y"]..panel["y"]+panel["h"] - 1]
         for x in [panel["x"]..panel["x"]+panel["w"] - 1]
-          field.buff[y][x] = 1
+          f.buff[y][x] = 1
 
-    for key,panel of field.panels
+    for key,panel of f.panels
       min_move_x = max_move_x = FIELD_OFS_X + panel.x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
       min_move_y = max_move_y = FIELD_OFS_Y + panel.y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+      for y in [panel.y+panel.h..f.h - 1]
+        ""
+
+      if panel.x+panel.w < f.w
+        for x in [panel.x+panel.w..f.w - 1]
+          if f.buff[panel.y][x] == 0
+            max_move_x += (ONE_WIDTH + OFS_PANEL_TO_PANEL)
+          else
+            break
+      if panel.x > 0
+        for x in [panel.x-1..0]
+          if f.buff[panel.y][x] == 0
+            min_move_x -= (ONE_WIDTH + OFS_PANEL_TO_PANEL)
+          else
+            break
+
       panel.image.min_move_x = min_move_x
       panel.image.min_move_y = min_move_y
       panel.image.max_move_x = max_move_x
       panel.image.max_move_y = max_move_y
-      console.log panel
-    ###
-    for key,panel of field.panels
-      for target_key,target_panel of field.panels
-        if key == target_key
-          continue
-        ""
-    ###
-
-
 
   panel_drag_update = (sprite, pointer, drag_x, drag_y, snapPoint) ->
-    sprite.y = sprite.max_move_y
-    sprite.x = sprite.max_move_x
-    #sprite.y = FIELD_OFS_Y + sprite.idx_y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
-    #console.log drag_x
-    ""
+    if sprite.y > sprite.max_move_y
+      sprite.y = sprite.max_move_y
+    if sprite.y < sprite.min_move_y
+      sprite.y = sprite.min_move_y
+    if sprite.x > sprite.max_move_x
+      sprite.x = sprite.max_move_x
+    if sprite.x < sprite.min_move_x
+      sprite.x = sprite.min_move_x
+
+  panel_drag_stop = (sprite, pointer) ->
+    min_x = 0
+    min_y = 0
+    for y in [0..m_field.h]
+      for x in [0..m_field.w]
+        tmp_x = x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
+    console.log sprite.x
 
   create_panels_from_json = (field_json)->
-    field_data = new Object
-    field_data.w = field_json["framesize"]["w"]
-    field_data.h = field_json["framesize"]["h"]
-    field_data.end_x = field_json["endpoint"]["x"]
-    field_data.end_y = field_json["endpoint"]["y"]
-    field_data.panels = []
+    m_field = new Object
+    m_field.w = field_json["framesize"]["w"]
+    m_field.h = field_json["framesize"]["h"]
+    m_field.end_x = field_json["endpoint"]["x"]
+    m_field.end_y = field_json["endpoint"]["y"]
+    m_field.panels = []
 
     for key,panel of field_json["panels"]
-      field_data.panels.push(panel)
+      m_field.panels.push(panel)
 
-      x = FIELD_OFS_X + field_data.panels[key].x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
-      y = FIELD_OFS_Y + field_data.panels[key].y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+      x = FIELD_OFS_X + m_field.panels[key].x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
+      y = FIELD_OFS_Y + m_field.panels[key].y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
 
-      if field_data.panels[key].w == 1 && field_data.panels[key].h == 1
-        field_data.panels[key].image = game.add.sprite(x, y, "11_0")
-      if field_data.panels[key].w == 2 && field_data.panels[key].h == 1
-        field_data.panels[key].image = game.add.sprite(x, y, "21_0")
-      if field_data.panels[key].w == 1 && field_data.panels[key].h == 2
-        field_data.panels[key].image = game.add.sprite(x, y, "12_0")
-      if field_data.panels[key].w == 2 && field_data.panels[key].h == 2
-        field_data.panels[key].image = game.add.sprite(x, y, "22_0")
+      if m_field.panels[key].w == 1 && m_field.panels[key].h == 1
+        m_field.panels[key].image = game.add.sprite(x, y, "11_0")
+      if m_field.panels[key].w == 2 && m_field.panels[key].h == 1
+        m_field.panels[key].image = game.add.sprite(x, y, "21_0")
+      if m_field.panels[key].w == 1 && m_field.panels[key].h == 2
+        m_field.panels[key].image = game.add.sprite(x, y, "12_0")
+      if m_field.panels[key].w == 2 && m_field.panels[key].h == 2
+        m_field.panels[key].image = game.add.sprite(x, y, "22_0")
 
-      field_data.panels[key].image.idx_x = field_data.panels[key].x
-      field_data.panels[key].image.idx_y = field_data.panels[key].y
-      field_data.panels[key].image.inputEnabled = true
-      field_data.panels[key].image.input.enableDrag true
-      field_data.panels[key].image.events.onDragUpdate.add(panel_drag_update)
+      m_field.panels[key].image.idx_x = m_field.panels[key].x
+      m_field.panels[key].image.idx_y = m_field.panels[key].y
+      m_field.panels[key].image.inputEnabled = true
+      m_field.panels[key].image.input.enableDrag true
+      m_field.panels[key].image.events.onDragUpdate.add(panel_drag_update)
+      m_field.panels[key].image.events.onDragStop.add(panel_drag_stop, this);
 
-    update_field_buff field_data
+    update_field_buff m_field
 
   preload = ->
     game.time.advancedTiming = true
