@@ -24,6 +24,7 @@ GameMain = ->
         for x in [img.idx_x..img.idx_x+panel.w - 1]
           f.buff[y][x] = 1
 
+    ###
     for key,panel of f.panels
       img = panel.image
       min_move_x = max_move_x = FIELD_OFS_X + img.idx_x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
@@ -53,13 +54,7 @@ GameMain = ->
             min_move_x -= (ONE_WIDTH + OFS_PANEL_TO_PANEL)
           else
             break
-
-      ###
-      img.min_move_x = min_move_x
-      img.min_move_y = min_move_y
-      img.max_move_x = max_move_x
-      img.max_move_y = max_move_y
-      ###
+    ###
 
   panel_drag_update = (sprite, pointer, drag_x, drag_y, snapPoint) ->
     next_x = sprite.x
@@ -69,10 +64,10 @@ GameMain = ->
     max_x = FIELD_OFS_X + (m_field.w - sprite.panel_w)*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
     max_y = FIELD_OFS_Y + (m_field.h - sprite.panel_h)*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
 
-    w0 = sprite.width
-    h0 = sprite.height
+    w0 = sprite.width + OFS_PANEL_TO_PANEL
+    h0 = sprite.height + OFS_PANEL_TO_PANEL
 
-    # 貫通防止
+    # 貫通防止 (1*1パネル分しか移動できないようにする)
     if Math.abs(next_x - before_x) > (ONE_WIDTH + OFS_PANEL_TO_PANEL)
       sprite.x = before_x
     if Math.abs(next_y - before_y) > (ONE_HEIGHT + OFS_PANEL_TO_PANEL)
@@ -87,23 +82,12 @@ GameMain = ->
     if sprite.y > max_y
       sprite.y = max_y
 
-    ###
-    if sprite.y > sprite.max_move_y
-      sprite.y = sprite.max_move_y
-    if sprite.y < sprite.min_move_y
-      sprite.y = sprite.min_move_y
-    if sprite.x > sprite.max_move_x
-      sprite.x = sprite.max_move_x
-    if sprite.x < sprite.min_move_x
-      sprite.x = sprite.min_move_x
-    ###
-
     for key,panel of m_field.panels
       if key == sprite.idx
         continue
       img = panel.image
-      w1 = img.width
-      h1 = img.height
+      w1 = img.width + OFS_PANEL_TO_PANEL / 2
+      h1 = img.height + OFS_PANEL_TO_PANEL / 2
       if ( (next_x        < img.x + w1) &&
          (  next_x   + w0 > img.x     ) &&
          (  before_y      < img.y + h1) &&
@@ -115,8 +99,8 @@ GameMain = ->
       if key == sprite.idx
         continue
       img = panel.image
-      w1 = img.width
-      h1 = img.height
+      w1 = img.width + OFS_PANEL_TO_PANEL / 2
+      h1 = img.height + OFS_PANEL_TO_PANEL / 2
       if ( (before_x      < img.x + w1) &&
          (  before_x + w0 > img.x     ) &&
          (  next_y        < img.y + h1) &&
@@ -146,6 +130,8 @@ GameMain = ->
     panel_set_idx(sprite)
     sprite.x = FIELD_OFS_X + sprite.idx_x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
     sprite.y = FIELD_OFS_Y + sprite.idx_y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+    sprite.before_x = sprite.x
+    sprite.before_y = sprite.y
     update_field_buff(m_field)
 
   create_panels_from_json = (field_json)->
@@ -215,7 +201,6 @@ GameMain = ->
     game.debug.text('scale : ' + m_game_scale, 0, y += yi)
 
   update = ->
-
 
   window['PhaserGlobal'] = []
   window['PhaserGlobal'].disableAudio = true
