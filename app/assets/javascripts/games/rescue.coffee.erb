@@ -33,8 +33,8 @@ GameMain = ->
     max_x = FIELD_OFS_X + (m_field.w - sprite.panel_w)*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
     max_y = FIELD_OFS_Y + (m_field.h - sprite.panel_h)*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
 
-    w0 = sprite.width + OFS_PANEL_TO_PANEL
-    h0 = sprite.height + OFS_PANEL_TO_PANEL
+    w0 = sprite.width + OFS_PANEL_TO_PANEL / 2
+    h0 = sprite.height + OFS_PANEL_TO_PANEL / 2
 
     # 貫通防止 (1*1パネル分しか移動できないようにする)
     if Math.abs(next_x - before_x) > (ONE_WIDTH + OFS_PANEL_TO_PANEL)
@@ -55,7 +55,7 @@ GameMain = ->
       if key == sprite.idx
         continue
       img = panel.image
-      w1 = img.width + OFS_PANEL_TO_PANEL / 3
+      w1 = img.width + OFS_PANEL_TO_PANEL / 2
       h1 = img.height
       if ( (next_x        < img.x + w1) &&
          (  next_x   + w0 > img.x     ) &&
@@ -70,7 +70,7 @@ GameMain = ->
         continue
       img = panel.image
       w1 = img.width
-      h1 = img.height + OFS_PANEL_TO_PANEL / 3
+      h1 = img.height + OFS_PANEL_TO_PANEL / 2
       if ( (before_x      < img.x + w1) &&
          (  before_x + w0 > img.x     ) &&
          (  next_y        < img.y + h1) &&
