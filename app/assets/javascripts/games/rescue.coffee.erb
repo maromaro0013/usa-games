@@ -5,6 +5,7 @@
 GameMain = ->
   m_game_scale = 1.0
   m_field = ""
+  m_stage_num = 0
 
   FixViewPort = ->
     m_game_scale = window.innerHeight / CANVAS_HEIGHT
@@ -24,38 +25,6 @@ GameMain = ->
         for x in [img.idx_x..img.idx_x+panel.w - 1]
           f.buff[y][x] = 1
 
-    ###
-    for key,panel of f.panels
-      img = panel.image
-      min_move_x = max_move_x = FIELD_OFS_X + img.idx_x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
-      min_move_y = max_move_y = FIELD_OFS_Y + img.idx_y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
-      if img.idx_y+panel.h < f.h
-        for y in [(img.idx_y+panel.h)..(f.h - 1)]
-          if f.buff[y][img.idx_x] == 0
-            max_move_y += (ONE_HEIGHT + OFS_PANEL_TO_PANEL)
-          else
-            break
-      if img.idx_y > 0
-        for y in [(img.idx_y-1)..0]
-          if f.buff[y][img.idx_x] == 0
-            min_move_y -= (ONE_HEIGHT + OFS_PANEL_TO_PANEL)
-          else
-            break
-
-      if img.idx_x+panel.w < f.w
-        for x in [(img.idx_x+panel.w)..(f.w - 1)]
-          if f.buff[img.idx_y][x] == 0
-            max_move_x += (ONE_WIDTH + OFS_PANEL_TO_PANEL)
-          else
-            break
-      if img.idx_x > 0
-        for x in [(img.idx_x-1)..(0)]
-          if f.buff[img.idx_y][x] == 0
-            min_move_x -= (ONE_WIDTH + OFS_PANEL_TO_PANEL)
-          else
-            break
-    ###
-
   panel_drag_update = (sprite, pointer, drag_x, drag_y, snapPoint) ->
     next_x = sprite.x
     next_y = sprite.y
@@ -64,8 +33,8 @@ GameMain = ->
     max_x = FIELD_OFS_X + (m_field.w - sprite.panel_w)*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
     max_y = FIELD_OFS_Y + (m_field.h - sprite.panel_h)*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
 
-    w0 = sprite.width
-    h0 = sprite.height
+    w0 = sprite.width + OFS_PANEL_TO_PANEL
+    h0 = sprite.height + OFS_PANEL_TO_PANEL
 
     # 貫通防止 (1*1パネル分しか移動できないようにする)
     if Math.abs(next_x - before_x) > (ONE_WIDTH + OFS_PANEL_TO_PANEL)
@@ -86,7 +55,7 @@ GameMain = ->
       if key == sprite.idx
         continue
       img = panel.image
-      w1 = img.width
+      w1 = img.width + OFS_PANEL_TO_PANEL / 2
       h1 = img.height
       if ( (next_x        < img.x + w1) &&
          (  next_x   + w0 > img.x     ) &&
@@ -100,7 +69,7 @@ GameMain = ->
         continue
       img = panel.image
       w1 = img.width
-      h1 = img.height
+      h1 = img.height + OFS_PANEL_TO_PANEL / 2
       if ( (before_x      < img.x + w1) &&
          (  before_x + w0 > img.x     ) &&
          (  next_y        < img.y + h1) &&
@@ -183,6 +152,10 @@ GameMain = ->
     game.load.image('21_1', '<%= image_path("games/rescue/panel_21_1.png") %>')
     game.load.image('22_0', '<%= image_path("games/rescue/panel_22_0.png") %>')
 
+    game.load.image('restart_btn', '<%= image_path("games/rescue/restart_btn.png") %>')
+    game.load.image('retire_btn', '<%= image_path("games/rescue/retire_btn.png") %>')
+    game.load.image('escape_btn', '<%= image_path("games/rescue/escape_btn.png") %>')
+
   create = ->
     game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE
     FixViewPort()
@@ -194,11 +167,17 @@ GameMain = ->
 
     create_panels_from_json JSON.parse STAGE1_DATA
 
+    game.add.image(RESTART_X, RESTART_Y, 'restart_btn')
+    game.add.image(RETIRE_X, RETIRE_Y, 'retire_btn')
+    game.add.image(ESCAPE_X, ESCAPE_Y, 'escape_btn')
+
   render = ->
+    ###
     yi = 32
     y = 0
     game.debug.text('fps : ' + game.time.fps, 0, y += yi)
     game.debug.text('scale : ' + m_game_scale, 0, y += yi)
+    ###
 
   update = ->
 
