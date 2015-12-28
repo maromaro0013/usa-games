@@ -11,6 +11,9 @@ var ONE_HEIGHT = 120
 var FIELD_OFS_X = 100
 var FIELD_OFS_Y = 200
 
+var LOADER_X = (CANVAS_WIDTH/2 - 64)
+var LOADER_Y = (CANVAS_HEIGHT/2 - 64)
+
 // はじめからボタン
 var RESTART_X = 94
 var RESTART_Y = 10

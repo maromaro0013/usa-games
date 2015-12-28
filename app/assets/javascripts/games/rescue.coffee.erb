@@ -142,6 +142,55 @@ GameMain = ->
 
     update_field_buff m_field
 
+  panel_timer_move = ->
+    console.log "mokyun"
+
+  touch_escape_button = ->
+    bmd = game.add.bitmapData(1,　1)
+    bmd.ctx.beginPath()
+    bmd.ctx.rect(0, 0, 1, 1)
+    bmd.ctx.fillStyle = '#000000'
+    bmd.ctx.fill()
+    black_sprite = game.add.sprite(0, 0, bmd);
+    black_sprite.scale.x = CANVAS_WIDTH
+    black_sprite.scale.y = CANVAS_HEIGHT
+    black_sprite.alpha = 0.5
+    black_sprite.inputEnabled = true
+
+    #ajax_loader = game.add.sprite(LOADER_X, LOADER_Y, "ajax_loader");
+
+    data = {}
+    data["framesize"] = {}
+    data["framesize"]["w"] = m_field.w
+    data["framesize"]["h"] = m_field.h
+    data["endpoint"] = {}
+    data["endpoint"]["x"] = m_field.end_x
+    data["endpoint"]["y"] = m_field.end_y
+    data["panels"] = []
+    for key,panel of m_field.panels
+      img = panel.image
+      info = {}
+      info["x"] = img.idx_x
+      info["y"] = img.idx_y
+      info["w"] = panel.w
+      info["h"] = panel.h
+      info["type"] = panel.type
+      data["panels"].push info
+
+    $.ajax({
+      url: '/games/rescue/hakoirisolver'
+      type: 'post',
+      data: {field_data: data},
+      dataType: 'json',
+      success: (ret)->
+        #timer = game.time.create(500, false)
+        #timer.onEvent.add(panel_timer_move, this)
+        #timer.start()
+        black_sprite.kill()
+        #ajax_loader.kill()
+        #console.log ret
+    })
+
   preload = ->
     game.time.advancedTiming = true
 
@@ -171,7 +220,10 @@ GameMain = ->
 
     game.add.image(RESTART_X, RESTART_Y, 'restart_btn')
     game.add.image(RETIRE_X, RETIRE_Y, 'retire_btn')
-    game.add.image(ESCAPE_X, ESCAPE_Y, 'escape_btn')
+
+    escape_btn = game.add.image(ESCAPE_X, ESCAPE_Y, 'escape_btn')
+    escape_btn.inputEnabled = true
+    escape_btn.events.onInputDown.add(touch_escape_button)
 
   render = ->
     ###
@@ -182,6 +234,7 @@ GameMain = ->
     ###
 
   update = ->
+    ""
 
   window['PhaserGlobal'] = []
   window['PhaserGlobal'].disableAudio = true
