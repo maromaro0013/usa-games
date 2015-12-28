@@ -55,13 +55,14 @@ GameMain = ->
       if key == sprite.idx
         continue
       img = panel.image
-      w1 = img.width + OFS_PANEL_TO_PANEL / 2
+      w1 = img.width + OFS_PANEL_TO_PANEL / 3
       h1 = img.height
       if ( (next_x        < img.x + w1) &&
          (  next_x   + w0 > img.x     ) &&
          (  before_y      < img.y + h1) &&
          (  before_y + h0 > img.y     ))
         sprite.x = before_x
+        #sprite.x = FIELD_OFS_X + (img.idx_x - sprite.panel_w)*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
         break
 
     for key,panel of m_field.panels
@@ -69,12 +70,13 @@ GameMain = ->
         continue
       img = panel.image
       w1 = img.width
-      h1 = img.height + OFS_PANEL_TO_PANEL / 2
+      h1 = img.height + OFS_PANEL_TO_PANEL / 3
       if ( (before_x      < img.x + w1) &&
          (  before_x + w0 > img.x     ) &&
          (  next_y        < img.y + h1) &&
          (  next_y + h0   > img.y     ))
         sprite.y = before_y
+        #sprite.y = (img.idx_y - sprite.panel_h)*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
         break
 
     sprite.before_x = sprite.x
