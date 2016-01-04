@@ -6,6 +6,8 @@ GameMain = ->
   m_game_scale = 1.0
   m_field = ""
   m_stage_num = 0
+  m_solve_arr = ""
+  m_move_timer_event = ""
 
   FixViewPort = ->
     m_game_scale = window.innerHeight / CANVAS_HEIGHT
@@ -82,6 +84,12 @@ GameMain = ->
     sprite.before_x = sprite.x
     sprite.before_y = sprite.y
 
+  panel_set_pos = (sprite) ->
+    sprite.x = FIELD_OFS_X + sprite.idx_x*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
+    sprite.y = FIELD_OFS_Y + sprite.idx_y*(ONE_HEIGHT + OFS_PANEL_TO_PANEL)
+    sprite.before_x = sprite.x
+    sprite.before_y = sprite.y
+
   panel_set_idx = (sprite) ->
     min_x = 9999999
     min_y = 9999999
@@ -143,7 +151,25 @@ GameMain = ->
     update_field_buff m_field
 
   panel_timer_move = ->
-    console.log "mokyun"
+    move = m_solve_arr.shift()
+    console.log move
+
+    idx = move["index"]
+    switch move["action"]
+      when "UP"
+        m_field.panels[idx].image.idx_y -= 1
+      when "DOWN"
+        m_field.panels[idx].image.idx_y += 1
+      when "LEFT"
+        m_field.panels[idx].image.idx_x -= 1
+      when "RIGHT"
+        m_field.panels[idx].image.idx_x += 1
+
+    #console.log m_solve_arr.length
+    panel_set_pos m_field.panels[idx].image
+
+    if m_solve_arr.length <= 0
+      game.time.events.remove(m_move_timer_event)
 
   touch_escape_button = ->
     bmd = game.add.bitmapData(1,　1)
@@ -156,8 +182,6 @@ GameMain = ->
     black_sprite.scale.y = CANVAS_HEIGHT
     black_sprite.alpha = 0.5
     black_sprite.inputEnabled = true
-
-    #ajax_loader = game.add.sprite(LOADER_X, LOADER_Y, "ajax_loader");
 
     data = {}
     data["framesize"] = {}
@@ -183,6 +207,8 @@ GameMain = ->
       data: {field_data: data},
       dataType: 'json',
       success: (ret)->
+        m_solve_arr = ret.concat()
+        m_move_timer_event = game.time.events.loop(200, panel_timer_move, this)
         #timer = game.time.create(500, false)
         #timer.onEvent.add(panel_timer_move, this)
         #timer.start()
@@ -234,7 +260,6 @@ GameMain = ->
     ###
 
   update = ->
-    ""
 
   window['PhaserGlobal'] = []
   window['PhaserGlobal'].disableAudio = true

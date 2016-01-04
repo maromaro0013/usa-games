@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/maromaro0013/hakoirisolver-rails.git
-  revision: e67d20936e35e920466da4c4ba1af149585be95e
+  revision: 39e926496cec5daec79d948daceb15437ae6086a
   specs:
-    hakoirisolver-rails (0.7.0)
+    hakoirisolver-rails (0.8.0)
 
 GIT
   remote: git://github.com/maromaro0013/phaser-rails.git

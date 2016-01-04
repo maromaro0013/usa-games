@@ -36,7 +36,7 @@ class GamesController < ApplicationController
       move_cnt += 1
     end
 
-    move_actions = move_actions.reverse
+    #move_actions = move_actions.reverse
     solver.delete_solver
 
     render :json => move_actions
