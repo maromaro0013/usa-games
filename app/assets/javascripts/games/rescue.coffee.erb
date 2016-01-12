@@ -242,7 +242,16 @@ GameMain = ->
     game.stage.backgroundColor = BG_COLOR
     game.add.image(BG_X, BG_Y, 'bg')
 
-    create_panels_from_json JSON.parse STAGE1_DATA
+    level = $("#rescue_level").html()
+    switch level
+      when "1"
+        create_panels_from_json JSON.parse STAGE1_DATA
+      when "2"
+        create_panels_from_json JSON.parse STAGE2_DATA
+      when "3"
+        create_panels_from_json JSON.parse STAGE3_DATA
+      else
+        create_panels_from_json JSON.parse STAGE1_DATA
 
     game.add.image(RESTART_X, RESTART_Y, 'restart_btn')
     game.add.image(RETIRE_X, RETIRE_Y, 'retire_btn')

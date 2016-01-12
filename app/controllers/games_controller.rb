@@ -41,4 +41,8 @@ class GamesController < ApplicationController
 
     render :json => move_actions
   end
+
+  def rescue
+    @rescue_level = params["level"]
+  end
 end
