@@ -15,7 +15,7 @@ Rails.application.routes.draw do
 
   get '/games/watch' => 'games#watch', as: :games_watch
   get '/games/usausa' => 'games#usausa', as: :games_usausa
-  get '/games/rescue' => 'games#rescue', as: :games_rescue
+  get '/games/rescue/:level' => 'games#rescue', as: :games_rescue
 
   post '/games/rescue/hakoirisolver' => 'games#hakoirisolver', as: :games_rescue_hakoirisolver
 
