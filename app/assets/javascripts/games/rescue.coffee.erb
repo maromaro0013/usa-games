@@ -64,7 +64,6 @@ GameMain = ->
          (  before_y      < img.y + h1) &&
          (  before_y + h0 > img.y     ))
         sprite.x = before_x
-        #sprite.x = FIELD_OFS_X + (img.idx_x - sprite.panel_w)*(ONE_WIDTH + OFS_PANEL_TO_PANEL)
         break
 
     for key,panel of m_field.panels
@@ -165,11 +164,13 @@ GameMain = ->
       when "RIGHT"
         m_field.panels[idx].image.idx_x += 1
 
-    #console.log m_solve_arr.length
     panel_set_pos m_field.panels[idx].image
 
     if m_solve_arr.length <= 0
       game.time.events.remove(m_move_timer_event)
+
+  touch_restart_button = ->
+    location.reload()
 
   touch_escape_button = ->
     bmd = game.add.bitmapData(1,　1)
@@ -209,12 +210,7 @@ GameMain = ->
       success: (ret)->
         m_solve_arr = ret.concat()
         m_move_timer_event = game.time.events.loop(200, panel_timer_move, this)
-        #timer = game.time.create(500, false)
-        #timer.onEvent.add(panel_timer_move, this)
-        #timer.start()
         black_sprite.kill()
-        #ajax_loader.kill()
-        #console.log ret
     })
 
   preload = ->
@@ -253,8 +249,11 @@ GameMain = ->
       else
         create_panels_from_json JSON.parse STAGE1_DATA
 
-    game.add.image(RESTART_X, RESTART_Y, 'restart_btn')
-    game.add.image(RETIRE_X, RETIRE_Y, 'retire_btn')
+    restart_btn = game.add.image(RESTART_X, RESTART_Y, 'restart_btn')
+    restart_btn.inputEnabled = true
+    restart_btn.events.onInputDown.add(touch_restart_button)
+
+    retire_btn = game.add.image(RETIRE_X, RETIRE_Y, 'retire_btn')
 
     escape_btn = game.add.image(ESCAPE_X, ESCAPE_Y, 'escape_btn')
     escape_btn.inputEnabled = true
