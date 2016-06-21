@@ -36,7 +36,7 @@ set :deploy_to, "/home/usa-games/#{fetch(:application)}"
 
 # rbenv
 set :rbenv_type, :system # or :user, depends on your rbenv setup
-set :rbenv_ruby, '2.2.2'
+set :rbenv_ruby, '2.2.5'
 set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
 set :rbenv_map_bins, %w{rake gem bundle ruby rails}
 set :rbenv_roles, :all # default value
